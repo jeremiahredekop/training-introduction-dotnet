@@ -51,7 +51,13 @@ namespace Application.Test.Domain.ReadModel
         [Fact]
         public void should_add_slot_again_if_booking_was_cancelled()
         {
+            var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+            var booked = new Booked(scheduled.SlotId, "patient-123");
+            var cancelled = new Cancelled(scheduled.SlotId, "not sure why");
 
+            Given(scheduled,booked, cancelled);
+            Then(new List<AvailableSlot> {new AvailableSlot(scheduled.SlotId, scheduled.StartTime, scheduled.Duration)},
+                _repository.getSlotsAvailableOn(_now.Date));
         }
     }
 }

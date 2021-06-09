@@ -9,6 +9,23 @@ namespace Application.Application
     {
         public AvailableSlotsProjection(IAvailableSlotsRepository repo)
         {
+            When<Scheduled>(s =>
+            {
+                repo.Add(new AvailableSlot(s.SlotId, s.StartTime, s.Duration));
+                return Task.CompletedTask;
+            });
+
+            When<Booked>(s =>
+            {
+                repo.MarkAsUnavailable(s.SlotId);
+                return Task.CompletedTask;
+            });
+
+            When<Cancelled>(s =>
+            {
+                repo.MarkAsAvailable(s.SlotId);
+                return Task.CompletedTask;
+            });
 
         }
     }
